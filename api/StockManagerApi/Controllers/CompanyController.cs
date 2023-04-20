@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace StockManagerApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/companies")]
     [ApiController]
     public class CompanyController : ControllerBase
     {
@@ -94,13 +94,13 @@ namespace StockManagerApi.Controllers
 
             if (userCompany == null)
             {
-                return BadRequest("La company spécifiée n'appartient pas à l'utilisateur actuel.");
+                return BadRequest("The specified company does not belong to the current user");
             }
 
             userCompany.Company.Name = newName;
             _context.SaveChanges();
 
-            return Ok("Nom de company mis à jour avec succès.");
+            return Ok("Company name successfully updated");
         }
 
         [Authorize]
