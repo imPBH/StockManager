@@ -83,5 +83,24 @@ namespace StockManagerApi.Controllers
 
             return Ok(new { message = "Successfully deleted" });
         }
+
+        [Authorize]
+        [HttpPost("update")]
+        public IActionResult Update(int companyId, string newName)
+        {
+            var currentUser = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+
+            var userCompany = _context.Users_Companies.Include(uc => uc.Company).FirstOrDefault(uc => uc.Id_Company == companyId && uc.Id_User == currentUser.Id);
+
+            if (userCompany == null)
+            {
+                return BadRequest("La company spécifiée n'appartient pas à l'utilisateur actuel.");
+            }
+
+            userCompany.Company.Name = newName;
+            _context.SaveChanges();
+
+            return Ok("Nom de company mis à jour avec succès.");
+        }
     }
 }
