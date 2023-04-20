@@ -102,5 +102,20 @@ namespace StockManagerApi.Controllers
 
             return Ok("Nom de company mis à jour avec succès.");
         }
+
+        [Authorize]
+        [HttpGet("get")]
+        public ActionResult<IEnumerable<Company>> Get()
+        {
+            var currentUser = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+
+            var companies = _context.Users_Companies
+                .Include(uc => uc.Company)
+                .Where(uc => uc.Id_User == currentUser.Id)
+                .Select(uc => uc.Company)
+                .ToList();
+
+            return Ok(companies);
+        }
     }
 }
