@@ -72,5 +72,21 @@ namespace StockManagerApi.Controllers
 
             return Ok(new { message = "Authentication succeeded." });
         }
+
+        [HttpGet("status")]
+        public IActionResult Status()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Ok(new { 
+                    id = User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                    username = User.FindFirst(ClaimTypes.Surname).Value
+                });
+            }
+            else
+            {
+                return Ok(new { message = "Not authenticated." });
+            }
+        }
     }
 }
