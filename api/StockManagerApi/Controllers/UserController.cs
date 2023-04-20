@@ -56,7 +56,7 @@ namespace StockManagerApi.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Surname, user.Username)
+                new Claim(ClaimTypes.Name, user.Username)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -80,7 +80,7 @@ namespace StockManagerApi.Controllers
             {
                 return Ok(new { 
                     id = User.FindFirst(ClaimTypes.NameIdentifier).Value,
-                    username = User.FindFirst(ClaimTypes.Surname).Value
+                    username = User.FindFirst(ClaimTypes.Name).Value
                 });
             }
             else
