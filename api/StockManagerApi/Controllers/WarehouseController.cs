@@ -57,7 +57,6 @@ namespace StockManagerApi.Controllers
 
         }
 
-
         [Authorize]
         [HttpPost("update")]
         public IActionResult Update(int id, string newName)
@@ -90,6 +89,40 @@ namespace StockManagerApi.Controllers
             _context.SaveChanges();
 
             return Ok(new { message = "Warehouse updated successfully" });
+        }
+
+        [Authorize]
+        [HttpPost("delete")]
+        public IActionResult Delete(int id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return StatusCode(401);
+            }
+
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == id);
+            if (warehouse == null)
+            {
+                return BadRequest(new { message = "Warehouse not found" });
+            }
+
+            var company = _context.Companies.FirstOrDefault(c => c.Id == warehouse.Id_Company);
+            if (company == null)
+            {
+                return BadRequest(new { message = "Company not found" });
+            }
+
+            var userCompany = _context.Users_Companies.FirstOrDefault(uc => uc.Id_User == user.Id && uc.Id_Company == company.Id);
+            if (userCompany == null)
+            {
+                return Forbid();
+            }
+
+            _context.Warehouses.Remove(warehouse);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Warehouse deleted successfully" });
         }
     }
 }
