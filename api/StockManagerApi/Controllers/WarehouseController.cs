@@ -124,5 +124,31 @@ namespace StockManagerApi.Controllers
 
             return Ok(new { message = "Warehouse deleted successfully" });
         }
+
+        [Authorize]
+        [HttpGet("get")]
+        public IActionResult Get(int companyId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return StatusCode(401);
+            }
+
+            var company = _context.Companies.FirstOrDefault(c => c.Id == companyId);
+            if (company == null)
+            {
+                return BadRequest(new { message = "Company not found" });
+            }
+
+            var userCompany = _context.Users_Companies.FirstOrDefault(uc => uc.Id_User == user.Id && uc.Id_Company == company.Id);
+            if (userCompany == null)
+            {
+                return Forbid();
+            }
+
+            var warehouses = _context.Warehouses.Where(w => w.Id_Company == companyId).ToList();
+            return Ok(warehouses);
+        }
     }
 }
