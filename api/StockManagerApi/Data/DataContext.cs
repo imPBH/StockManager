@@ -16,5 +16,6 @@ namespace StockManagerApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<UserCompany> Users_Companies { get; set; }
+        public DbSet<Warehouse> Warehouses { get; set; }
     }
 }

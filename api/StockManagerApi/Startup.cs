@@ -42,7 +42,10 @@ namespace StockManagerApi
             {
                 options.Cookie.Name = "session";
                 options.ExpireTimeSpan = TimeSpan.FromHours(24);
-                options.LoginPath = "/api/auth/login";
+                options.Events.OnRedirectToAccessDenied = context => {
+                    context.Response.StatusCode = 403;
+                    return Task.CompletedTask;
+                };
             });
         }
 
