@@ -8,47 +8,42 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import TileComponent from "../components/TileComponent";
-import { useNavigation } from '@react-navigation/native';
 
-export default function CompanySelectionScreen({ route }) {
-  const navigation = useNavigation();
-  const companies = [
-    "Amazon",
-    "Apple",
-    "Facebook",
-    "Google",
-    "Microsoft",
-    "Netflix",
-    "Twitter",
-    "Uber",
-    "Yahoo",
+export default function WarehouseSelectionScreen({ route }) {
+  const warehouses = [
+    "Warehouse 1",
+    "Warehouse 2",
+    "Warehouse 3",
+    "Warehouse 4",
+    "Warehouse 5",
+    "Warehouse 6",
+    "Warehouse 7"
   ];
-  const handleCompanySelection = (company) => {
-    console.log(`User selected ${company}`);
-    navigation.navigate("WarehouseSelectionScreen", { company });
+  const handleWarehouseSelection = (warehouse) => {
+    console.log(`User selected ${warehouse}`);
   };
 
-  const username = route.params.user;
-
-  const TilesCompanies = companies.map((company) => (
-    <TileComponent key={company} title={company} onPress={handleCompanySelection} />
+  const TilesWarehouses = warehouses.map((warehouse) => (
+    <TileComponent key={warehouse} title={warehouse} onPress={handleWarehouseSelection} />
     ));
+
+  const company = route.params.company;
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.content}>
-          <Text style={styles.title}>StockManager!</Text>
-          <Text style={styles.subtitle}>Welcome {username}</Text>
-          <Text style={styles.subtitle}>Select your company</Text>
+          <Text style={styles.title}>{company}</Text>
+          <Text style={styles.subtitle}>Select your warehouse</Text>
           <View style={styles.etpContainer}>
-            {TilesCompanies}
+            {TilesWarehouses}
           </View>
         </View>
       </ScrollView>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
