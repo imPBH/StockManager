@@ -1,6 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import CompanySelectionScreen from '../screens/CompanySelectionScreen.js';
+import WarehouseSelectionScreen from '../screens/WarehouseSelectionScreen';
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -8,6 +10,7 @@ export default function AppNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Connexion" component={LoginScreen} />
       <Stack.Screen name="CompanySelectionScreen" component={CompanySelectionScreen} />
+      <Stack.Screen name="WarehouseSelectionScreen" component={WarehouseSelectionScreen} />
     </Stack.Navigator>
   );
 }

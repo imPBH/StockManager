@@ -21,7 +21,7 @@ export default function LoginScreen() {
 
     // Continue with login logic
     alert('Vous vous êtes connecté!');
-    navigation.navigate('CompanySelectionScreen');
+    navigation.navigate('CompanySelectionScreen', {user: username});
   };
 
   return (

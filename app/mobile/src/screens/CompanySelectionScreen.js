@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import TileComponent from "../components/TileComponent";
+import { useNavigation } from '@react-navigation/native';
 
-export default function CompanySelectionScreen() {
+export default function CompanySelectionScreen({ route }) {
+  const navigation = useNavigation();
   const companies = [
     "Amazon",
     "Apple",
@@ -23,7 +25,10 @@ export default function CompanySelectionScreen() {
   ];
   const handleCompanySelection = (company) => {
     console.log(`User selected ${company}`);
+    navigation.navigate("WarehouseSelectionScreen", { company });
   };
+
+  const username = route.params.user;
 
   const TilesCompanies = companies.map((company) => (
     <TileComponent key={company} title={company} onPress={handleCompanySelection} />
@@ -34,6 +39,7 @@ export default function CompanySelectionScreen() {
       <ScrollView>
         <View style={styles.content}>
           <Text style={styles.title}>StockManager!</Text>
+          <Text style={styles.subtitle}>Welcome {username}</Text>
           <Text style={styles.subtitle}>Select your company</Text>
           <View style={styles.etpContainer}>
             {TilesCompanies}
