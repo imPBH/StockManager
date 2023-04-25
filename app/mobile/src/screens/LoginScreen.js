@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     if (!username || !username.trim()) {
@@ -18,6 +21,7 @@ export default function LoginScreen() {
 
     // Continue with login logic
     alert('Vous vous êtes connecté!');
+    navigation.navigate('CompanySelectionScreen');
   };
 
   return (
@@ -67,3 +71,4 @@ const styles = StyleSheet.create({
     color: '#2196F3',
   },
 });
+
