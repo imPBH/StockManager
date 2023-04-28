@@ -28,15 +28,6 @@ CREATE TABLE IF NOT EXISTS "warehouses"
     FOREIGN KEY(id_company) REFERENCES companies(id)
 );
 
-CREATE TABLE IF NOT EXISTS "companies_warehouses"
-(
-    id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
-    id_company INTEGER NOT NULL,
-    id_warehouse INTEGER NOT NULL,
-    FOREIGN KEY(id_company) REFERENCES companies(id),
-    FOREIGN KEY(id_warehouse) REFERENCES warehouses(id)
-);
-
 CREATE TABLE IF NOT EXISTS "items_references"
 (
     id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -58,7 +49,24 @@ CREATE TABLE IF NOT EXISTS "articles"
 (
     id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
     id_reference INTEGER NOT NULL,
+    id_warehouse INTEGER NOT NULL,
     expiration TEXT,
+    FOREIGN KEY(id_reference) REFERENCES items_references(id),
+    FOREIGN KEY(id_warehouse) REFERENCES warehouses(id)
+);
+
+CREATE TABLE IF NOT EXISTS "orders"
+(
+    id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "orders_items"
+(
+    id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
+    id_order INTEGER NOT NULL,
+    id_reference INTEGER NOT NULL,
+    FOREIGN KEY(id_order) REFERENCES orders(id),
     FOREIGN KEY(id_reference) REFERENCES items_references(id)
 );
 
@@ -75,19 +83,4 @@ CREATE TABLE IF NOT EXISTS "sales_items"
     id_article INTEGER NOT NULL,
     FOREIGN KEY(id_sale) REFERENCES sales(id),
     FOREIGN KEY(id_article) REFERENCES articles(id)
-);
-
-CREATE TABLE IF NOT EXISTS "orders"
-(
-    id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
-    created_at TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS "orders_items"
-(
-    id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
-    id_order INTEGER NOT NULL,
-    id_reference INTEGER NOT NULL,
-    FOREIGN KEY(id_order) REFERENCES orders(id),
-    FOREIGN KEY(id_reference) REFERENCES items_references(id)
 );
