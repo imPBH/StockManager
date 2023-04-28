@@ -3,11 +3,10 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
-  TouchableOpacity,
+  ScrollView
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import TileComponent from "../components/TileComponent";
+import { useNavigation } from '@react-navigation/native';
 
 export default function WarehouseSelectionScreen({ route }) {
   const warehouses = [
@@ -19,15 +18,18 @@ export default function WarehouseSelectionScreen({ route }) {
     "Warehouse 6",
     "Warehouse 7"
   ];
+  const navigation = useNavigation();
+  const company = route.params.company;
   const handleWarehouseSelection = (warehouse) => {
     console.log(`User selected ${warehouse}`);
+    navigation.navigate("PrincipalScreen", { warehouse , company });
   };
 
   const TilesWarehouses = warehouses.map((warehouse) => (
     <TileComponent key={warehouse} title={warehouse} onPress={handleWarehouseSelection} />
     ));
 
-  const company = route.params.company;
+  
 
   return (
     <View style={styles.container}>
