@@ -25,17 +25,17 @@ namespace StockManagerApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(string username, string password)
+        public async Task<IActionResult> Register([FromBody] LoginModel model)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == username))
+            if (await _context.Users.AnyAsync(u => u.Username == model.Username))
             {
                 return BadRequest(new { message = "Username already exists" });
             }
 
             var user = new User
             {
-                Username = username,
-                Password = BCrypt.Net.BCrypt.HashPassword(password)
+                Username = model.Username,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password)
             };
 
             await _context.Users.AddAsync(user);
