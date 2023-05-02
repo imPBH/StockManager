@@ -45,12 +45,12 @@ namespace StockManagerApi.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login([FromBody] LoginModel model)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            var user = _context.Users.FirstOrDefault(u => u.Username == model.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
-                return Unauthorized();
+                return Unauthorized("Invalid credentials.");
             }
 
             var claims = new List<Claim>
