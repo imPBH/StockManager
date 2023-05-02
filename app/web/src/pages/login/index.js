@@ -1,4 +1,44 @@
+import { useState, useEffect } from 'react';
+
+
 export default function Login() {
+  const [error, setError] = useState(null);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+
+    fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formJson)
+    })
+    .then(response => {
+      if (response.ok) {
+        // La requête a été réussie, on peut rediriger l'utilisateur vers la page d'accueil par exemple
+        window.location.href = '/companies'
+      } else {
+        // La requête a échoué, on peut afficher un message d'erreur à l'utilisateur
+        setError('Invalid credentials')
+        throw new Error('Invalid credentials')
+      }
+    })
+    .catch(error => {
+      // Gérer les erreurs de la requête
+      console.error(error)
+    })
+  }
+
+  useEffect(() => {
+    setError(null);
+  }, []);
+
     return (
       <>
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -9,17 +49,17 @@ export default function Login() {
           </div>
   
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form className="space-y-6" action="#" method="POST">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                  Email address
+                <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+                  Username
                 </label>
                 <div className="mt-2">
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="username"
+                    name="username"
+                    type="username"
+                    autoComplete="username"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -42,7 +82,13 @@ export default function Login() {
                   />
                 </div>
               </div>
-  
+
+              {error && (
+                <p className="text-red-600 text-sm mt-1">
+                  {error}
+                </p>
+              )}
+
               <div>
                 <button
                   type="submit"
