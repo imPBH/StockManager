@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -12,27 +12,29 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function CompanySelectionScreen({ route }) {
   const navigation = useNavigation();
-  const companies = [
-    "Amazon",
-    "Apple",
-    "Facebook",
-    "Google",
-    "Microsoft",
-    "Netflix",
-    "Twitter",
-    "Uber",
-    "Yahoo",
-  ];
+  const [companies, setCompanies] = useState([]);
   const handleCompanySelection = (company) => {
-    console.log(`User selected ${company}`);
+    console.log(`User selected name: ${company.name} id ${company.id}`);
     navigation.navigate("WarehouseSelectionScreen", { company });
   };
 
   const username = route.params.user;
 
+  useEffect(() => {
+    fetch("http://stockmanager.alexisprovo.fr/api/companies/get", {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(data => setCompanies(data))
+  })
+
   const TilesCompanies = companies.map((company) => (
-    <TileComponent key={company} title={company} onPress={handleCompanySelection} />
+    <TileComponent key={company.id} title={company.name} onPress={() => handleCompanySelection(company)} />
     ));
+    
 
   return (
     <View style={styles.container}>
