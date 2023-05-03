@@ -20,8 +20,25 @@ export default function LoginScreen() {
     }
 
     // Continue with login logic
-    alert('Vous vous êtes connecté!');
-    navigation.navigate('CompanySelectionScreen', {user: username});
+    fetch('http://stockmanager.alexisprovo.fr/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({username: username, password: password})
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log("connected")
+        navigation.navigate('CompanySelectionScreen', {user: username});
+      } else {
+        throw new Error('Invalid credentials')
+      }
+    })
+    .catch(error => {
+      console.error(error)
+    })
   };
 
   return (
