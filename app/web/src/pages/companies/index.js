@@ -25,17 +25,31 @@ export default function Companies() {
       }
 
       function handleSubmit(form) {
-        // handle submit, call create company api
-        console.log(form)
-        const newCompany = {
-          name: form.companyName,
-          logo: 'https://www.growthmarketingpro.com/wp-content/uploads/2019/10/basecamp-logo.png',
-          warehouses: [9,6,10]
-        }
+        console.log(form)     
 
-        const nextCompanies = companies.slice()
-        nextCompanies.push(newCompany)
-        setCompanies(nextCompanies)
+        fetch('http://stockmanager.alexisprovo.fr/api/companies/create', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({name: form.companyName})
+        })
+        .then(response => {
+          if (response.ok) {
+            const newCompany = {
+              name: form.companyName,
+              logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk8bUSqr03ci51Fgv4DFkCEtx-6hs8F5_Jfd2GYk5dk35zKgKpEQ3XcTcfZOnR-uvNu_8&usqp=CAU',
+              warehouses: [9,6,10]
+            }
+            const nextCompanies = companies.slice()
+            nextCompanies.push(newCompany)
+            setCompanies(nextCompanies)
+          }
+          else {
+            throw new Error("Error while adding new company")
+          }
+        })
       }
 
       useEffect(() => {
@@ -45,9 +59,17 @@ export default function Companies() {
             'Content-Type': 'application/json'
           },
         })
-        .then((response) => response.json())
-        .then((data) => setCompanies(data));
+          .then(response => response.json())
+          .then(data => {
+            const mappedCompanies = data.map(company => ({
+              name: company.name,
+              logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk8bUSqr03ci51Fgv4DFkCEtx-6hs8F5_Jfd2GYk5dk35zKgKpEQ3XcTcfZOnR-uvNu_8&usqp=CAU',
+              warehouses: [9, 6, 10]
+            }));
+            setCompanies(mappedCompanies);
+          });
       }, []);
+      
 
     return (
       <>
