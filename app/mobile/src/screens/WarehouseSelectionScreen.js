@@ -35,7 +35,7 @@ export default function WarehouseSelectionScreen({ route }) {
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.content}>
-          <Text style={styles.title}>{company}</Text>
+          <Text style={styles.title}>{company.name}</Text>
           <Text style={styles.subtitle}>Select your warehouse</Text>
           <View style={styles.etpContainer}>
             {TilesWarehouses}
