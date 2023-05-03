@@ -1,20 +1,24 @@
 import CompanyCard from "@/components/company/CompanyCard"
 import CreateCompany from "@/components/modal/ModalForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Companies() {
-  const [companies, setCompanies] = useState([
-    {
-      name: 'Slack',
-      logo: 'https://d34u8crftukxnk.cloudfront.net/slackpress/prod/sites/6/SlackLogo_CompanyNews_SecondaryAubergine_Hero.jpg?d=500x500&amp;f=fill',
-      warehouses: [1,3]
-    },
-    {
-      name: 'Basecamp',
-      logo: 'https://www.growthmarketingpro.com/wp-content/uploads/2019/10/basecamp-logo.png',
-      warehouses: [9,6,10]
-    },
-  ])
+
+  // const [companies, setCompanies] = useState([
+  //   {
+  //     name: 'Slack',
+  //     logo: 'https://d34u8crftukxnk.cloudfront.net/slackpress/prod/sites/6/SlackLogo_CompanyNews_SecondaryAubergine_Hero.jpg?d=500x500&amp;f=fill',
+  //     warehouses: [1,3]
+  //   },
+  //   {
+  //     name: 'Basecamp',
+  //     logo: 'https://www.growthmarketingpro.com/wp-content/uploads/2019/10/basecamp-logo.png',
+  //     warehouses: [9,6,10]
+  //   },
+  // ])
+
+  const [companies, setCompanies] = useState([]);
+
       const CompaniesCard = () => {
         const companiesCard = companies.map(company => <CompanyCard company={company}></CompanyCard>)
         return companiesCard
@@ -33,6 +37,17 @@ export default function Companies() {
         nextCompanies.push(newCompany)
         setCompanies(nextCompanies)
       }
+
+      useEffect(() => {
+        fetch("http://stockmanager.alexisprovo.fr/api/companies/get", {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.json())
+        .then((data) => setCompanies(data));
+      }, []);
 
     return (
       <>
