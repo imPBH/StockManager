@@ -24,7 +24,7 @@ namespace StockManagerApi.Controllers
 
         [Authorize]
         [HttpPost("create")]
-        public IActionResult Create(string name)
+        public IActionResult Create([FromBody] string name)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
