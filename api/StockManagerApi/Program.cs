@@ -21,6 +21,7 @@ namespace StockManagerApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("http://164.90.215.33:80");
                 });
     }
 }
