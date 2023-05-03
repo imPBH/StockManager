@@ -13,7 +13,7 @@ export default Principal = ({route}) => {
 
   return (
     <View style={styles.container}>
-        <Text >{warehouse} in {company}</Text>
+        <Text >{warehouse} in {company.name}</Text>
       <Text style={styles.textedisplay}>Choose an option</Text>
       <ButtonComponent title="Manage inventory" onPress={handleButtonPress} />
       <ButtonComponent title="New sale" onPress={handleButtonPress} />
