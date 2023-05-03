@@ -12,7 +12,7 @@ export default function Login() {
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
-    fetch('http://localhost:5000/api/auth/login', {
+    fetch('http://stockmanager.alexisprovo.fr/api/auth/login', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -37,7 +37,7 @@ export default function Login() {
   }
 
   function handleRegister(form) {
-    return fetch('http://localhost:5000/api/auth/register', {
+    return fetch('http://stockmanager.alexisprovo.fr/api/auth/register', {
       method: 'POST',
       credentials: 'include',
       headers: {
