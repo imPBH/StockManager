@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function RegisterForm({ onSubmit }) {
+export default function RegisterForm({ onSubmit, error }) {
   const [showModal, setShowModal] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
@@ -12,7 +12,7 @@ export default function RegisterForm({ onSubmit }) {
     setShowModal(false);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
   
     const form = e.target;
@@ -25,9 +25,13 @@ export default function RegisterForm({ onSubmit }) {
     } else {
       setPasswordError(false);
     }
-  
-    onSubmit(formJson);
-    closeModal();
+
+    try {
+      await onSubmit(formJson);
+      closeModal();
+    } catch (e) {
+      console.error(e)
+    }
   }
   
 
@@ -124,6 +128,11 @@ export default function RegisterForm({ onSubmit }) {
                     Passwords do not match. Please try again.
                   </p>
                 )}
+                {error && (
+                <p className="text-red-600 text-sm mt-1">
+                  {error}
+                </p>
+              )}
                   <div className="flex justify-center items-center">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2">
                       Create

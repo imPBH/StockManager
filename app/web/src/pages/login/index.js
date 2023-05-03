@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import RegisterForm from '@/components/modal/RegisterForm';
 
 export default function Login() {
-  const [error, setError] = useState(null);
+  const [loginError, setLoginError] = useState(null);
+  const [registerError, setRegisterError] = useState(null);
 
-  function handleSubmit(e) {
+  function handleLogin(e) {
     e.preventDefault();
 
     const form = e.target;
@@ -24,18 +26,37 @@ export default function Login() {
         window.location.href = '/companies'
       } else {
         // La requête a échoué, on peut afficher un message d'erreur à l'utilisateur
-        setError('Invalid credentials')
+        setLoginError('Invalid credentials')
         throw new Error('Invalid credentials')
       }
     })
-    .catch(error => {
+    .catch(loginError => {
       // Gérer les erreurs de la requête
-      console.error(error)
+      console.error(loginError)
+    })
+  }
+
+  function handleRegister(form) {
+    return fetch('http://localhost:5000/api/auth/register', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({username: form.username, password: form.password})
+    })
+    .then(response => {
+      if (!response.ok) {
+        // La requête a échoué, on peut afficher un message d'erreur à l'utilisateur
+        setRegisterError("Username already taken")
+        throw new Error("Username already taken")
+      }
     })
   }
 
   useEffect(() => {
-    setError(null);
+    setLoginError(null)
+    setRegisterError(null)
   }, []);
 
     return (
@@ -48,7 +69,7 @@ export default function Login() {
           </div>
   
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
                   Username
@@ -82,9 +103,9 @@ export default function Login() {
                 </div>
               </div>
 
-              {error && (
+              {loginError && (
                 <p className="text-red-600 text-sm mt-1">
-                  {error}
+                  {loginError}
                 </p>
               )}
 
@@ -94,18 +115,12 @@ export default function Login() {
                   className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Sign in
-                </button>
-              </div>
-            </form>
-  
-            <p className="mt-10 text-center text-sm text-gray-500">
-              Not a member?{' '}
-              <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                Register a new account
-              </a>
-            </p>
-          </div>
+              </button>
+            </div>
+          </form>
         </div>
-      </>
-    )
-  }
+      </div>
+      <RegisterForm onSubmit={handleRegister} error={registerError} />
+    </>
+  )
+}
