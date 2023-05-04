@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
+import { Text, View, StyleSheet, TextInput, Button, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function UpdateReferenceScreen({ route }) {
   const reference = route.params.scannedReference;
+  const warehouse = route.params.warehouse;
   const navigation = useNavigation();
   const [newName, setNewName] = useState(reference.name);
   const [newBarcode, setNewBarcode] = useState(reference.barcode_value);
@@ -34,6 +35,47 @@ export default function UpdateReferenceScreen({ route }) {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        "http://stockmanager.alexisprovo.fr/api/reference/delete",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            companyId: warehouse.id_Company,
+            referenceId: reference.id,
+          }),
+        }
+      );
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Article supprimé avec succès : ", responseData);
+        navigation.goBack();
+      } else {
+        throw new Error("La suppression de l'article a échoué");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
+  const showAlert = () => {
+    Alert.alert(
+      "Supprimer l'article",
+      "Êtes-vous sûr de vouloir supprimer cet article ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        { text: "Supprimer", onPress: handleDelete, style: "destructive" },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Modifier l'article</Text>
@@ -62,6 +104,7 @@ export default function UpdateReferenceScreen({ route }) {
         />
       </View>
       <Button title="Mettre à jour" onPress={handleSubmit} />
+      <Button title="Supprimer" onPress={showAlert} />
     </View>
   );
 }

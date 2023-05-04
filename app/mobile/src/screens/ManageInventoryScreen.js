@@ -39,7 +39,7 @@ export default function ScannerScreenAdd({ route }) {
               onPress: () => {
                 navigation.navigate("UpdateReferenceScreen", {
                   scannedReference,
-                  warehouse,
+                  warehouse
                 });
               },
             },
