@@ -9,11 +9,11 @@ export default Principal = ({route}) => {
   const navigation = useNavigation();
 
   const handleRemovePress = () => {
-    navigation.navigate('SaleScreen');
+    navigation.navigate('SaleScreen', { warehouse , company });
   };
 
   const handleAddPress = () => {
-    navigation.navigate('ManageInventoryScreen');
+    navigation.navigate('ManageInventoryScreen', { warehouse , company });
   };
 
   return (

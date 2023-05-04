@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "warehouses"
 CREATE TABLE IF NOT EXISTS "items_references"
 (
     id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
-    barcode_value INTEGER NOT NULL,
+    barcode_value TEXT NOT NULL,
     name TEXT NOT NULL,
     price REAL NOT NULL
 );

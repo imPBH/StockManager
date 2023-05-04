@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useNavigation } from '@react-navigation/native';
 
-export default function ScannerScreenAdd() {
+
+export default function ScannerScreenAdd({route}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [references, setReferences] = useState([]);
+  const warehouse = route.params.warehouse;
+  const company = route.params.company;
+  const navigation = useNavigation();
+
 
   useEffect(() => {
     (async () => {
@@ -13,10 +20,23 @@ export default function ScannerScreenAdd() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    alert(`Code-barres de type ${type} et de données ${data} a été ajouté!`);
+    try {
+      const response = await fetch(`http://stockmanager.alexisprovo.fr/api/reference/get?companyId=${company.id}`);
+      const referencesData = await response.json();
+      const scannedReference = referencesData.find(reference => reference.barcode_value === data);
+      if (scannedReference) {
+        console.log(`Le code barre ${data} correspond à la référence ${scannedReference.name}`);
+      } else {
+        console.log(`Le code barre ${data} n'a pas été trouvé dans les références`);
+        navigation.navigate('NewReferenceScreen', { data , company });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   if (hasPermission === null) {
     return <Text>Demande de permission pour utiliser la caméra</Text>;
