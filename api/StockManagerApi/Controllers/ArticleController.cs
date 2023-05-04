@@ -74,8 +74,25 @@ namespace StockManagerApi.Controllers
                 return Forbid();
             }
 
-            var articles = _context.Articles.Where(a => a.Id_Warehouse == idWarehouse).ToList();
+            var articles = _context.Articles
+                .Where(a => a.Id_Warehouse == idWarehouse)
+                .Join(
+                    _context.Companies_References,
+                    article => new { article.Id_Reference, warehouse.Id_Company },
+                    companyReference => new { companyReference.Id_Reference, companyReference.Id_Company },
+                    (article, companyReference) => new
+                    {
+                        article.Id,
+                        article.Id_Reference,
+                        article.Id_Warehouse,
+                        article.Expiration,
+                        companyReference.Reference.Name,
+                        companyReference.Reference.Price
+                    })
+                .ToList();
+
             return Ok(articles);
         }
+
     }
 }
