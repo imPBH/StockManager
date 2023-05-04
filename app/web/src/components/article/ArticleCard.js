@@ -1,4 +1,11 @@
-export default function ArticleCard({article}) {  
+import EditArticleForm from "../modal/EditArticleForm";
+
+export default function ArticleCard({article, handleUpdate, handleDelete}) {  
+
+  function handleSubmit(form) {
+    handleUpdate(form, article);
+  } 
+
     return (
       <>
           <div className="pt-5 pr-0 pb-0 pl-0 mt-5 mr-0 mb-0 ml-0">
@@ -19,18 +26,13 @@ export default function ArticleCard({article}) {
                 </div>
               </div>
               <div className="mt-4 mr-0 mb-0 ml-0 pt-0 pr-0 pb-0 pl-14 flex items-center sm:space-x-6 sm:pl-0 sm:mt-0">
-                <a
-                  href="#"
-                  className="bg-gray-800 pt-2 pr-6 pb-2 pl-6 text-lg font-medium text-gray-100 transition-all duration-200 hover:bg-gray-700 rounded-lg"
-                >
-                  Edit
-                </a>
-                <a
-                  href="#"
-                  className="bg-gray-800 pt-2 pr-6 pb-2 pl-6 text-lg font-medium text-gray-100 transition-all duration-200 hover:bg-gray-700 rounded-lg"
-                >
-                  Delete
-                </a>
+                <EditArticleForm onSubmit={handleSubmit} />
+                <button
+              onClick={() => handleDelete(article)}
+              className="bg-red-500 pt-2 pr-6 pb-2 pl-6 text-lg font-medium text-gray-100 transition-all duration-200 hover:bg-red-600 rounded-lg"
+            >
+              Delete
+            </button>
               </div>
             </div>
           </div>

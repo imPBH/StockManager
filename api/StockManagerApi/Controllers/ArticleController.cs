@@ -145,5 +145,43 @@ namespace StockManagerApi.Controllers
 
             return Ok(article);
         }
+
+        public class DeleteModel
+        {
+            public int Id_Article { get; set; }
+        }
+
+        [Authorize]
+        [HttpPost("delete")]
+        public IActionResult Delete([FromBody] DeleteModel model)
+        {
+            var article = _context.Articles.FirstOrDefault(a => a.Id == model.Id_Article);
+            if (article == null)
+            {
+                return BadRequest("Article not found");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return StatusCode(401);
+            }
+
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == article.Id_Warehouse);
+            if (warehouse == null)
+            {
+                return BadRequest("Warehouse not found");
+            }
+
+            var userCompany = _context.Users_Companies.FirstOrDefault(uc => uc.Id_User == user.Id && uc.Id_Company == warehouse.Id_Company);
+            if (userCompany == null)
+            {
+                return Forbid();
+            }
+
+            _context.Articles.Remove(article);
+            _context.SaveChanges();
+            return Ok(new { message = "Article deleted successfully" });
+        }
     }
 }
