@@ -94,5 +94,56 @@ namespace StockManagerApi.Controllers
             return Ok(articles);
         }
 
+        public class UpdateModel
+        {
+            public int Id { get; set; }
+            public DateTime? Expiration { get; set; }
+        }
+
+        [Authorize]
+        [HttpPost("update")]
+        public IActionResult Update([FromBody] UpdateModel model)
+        {
+            var article = _context.Articles.FirstOrDefault(a => a.Id == model.Id);
+
+            if (article == null)
+            {
+                return BadRequest("Article not found");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+
+            if (user == null)
+            {
+                return StatusCode(401);
+            }
+
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == article.Id_Warehouse);
+
+            if (warehouse == null)
+            {
+                return BadRequest("Warehouse not found");
+            }
+
+            var userCompany = _context.Users_Companies.FirstOrDefault(uc => uc.Id_User == user.Id && uc.Id_Company == warehouse.Id_Company);
+
+            if (userCompany == null)
+            {
+                return Forbid();
+            }
+
+            if (model.Expiration.HasValue)
+            {
+                article.Expiration = model.Expiration.Value;
+            }
+            else
+            {
+                article.Expiration = null;
+            }
+
+            _context.SaveChanges();
+
+            return Ok(article);
+        }
     }
 }
