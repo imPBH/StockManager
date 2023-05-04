@@ -21,7 +21,13 @@ export default function CompanyCard({company}) {
                   href={"/warehouses/"+company.id}
                   className="bg-gray-800 pt-2 pr-6 pb-2 pl-6 text-lg font-medium text-gray-100 transition-all duration-200 hover:bg-gray-700 rounded-lg"
                 >
-                  Choose
+                  Warehouses
+                </a>
+                <a
+                  href={"/references/"+company.id}
+                  className="bg-gray-800 pt-2 pr-6 pb-2 pl-6 text-lg font-medium text-gray-100 transition-all duration-200 hover:bg-gray-700 rounded-lg"
+                >
+                  References
                 </a>
               </div>
             </div>
