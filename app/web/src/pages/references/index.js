@@ -26,10 +26,78 @@ export default function References() {
 
   const ReferencesCard = () => {
     const referencesCard = references.map((reference) => (
-      <ReferenceCard reference={reference}></ReferenceCard>
+      <ReferenceCard reference={reference} handleUpdate={handleUpdate} handleDelete={handleDelete}></ReferenceCard>
     ));
     return referencesCard;
   };
+
+  function handleDelete(reference) {
+    fetch("http://stockmanager.alexisprovo.fr/api/reference/delete", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        companyId: idCompany,
+        referenceId: reference.id
+      }),
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error while deleting reference");
+      }
+    })
+    .then(() => {
+      const updatedReferences = references.filter(
+        (r) => r.id !== reference.id
+      );
+      setReferences(updatedReferences);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
+  function handleUpdate(form, reference) {
+    fetch("http://stockmanager.alexisprovo.fr/api/reference/update", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: reference.id,
+        barcode_value: form.barcode_value,
+        name: form.name,
+        price: form.price
+      })
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error while updating reference");
+      }
+    })
+    .then(() => {
+      const index = references.findIndex((r) => r.id === reference.id);
+      const updatedReference = {
+        ...reference,
+        barcode_value: form.barcode_value,
+        name: form.name,
+        price: form.price
+      };
+      const nextReferences = references.slice();
+      nextReferences.splice(index, 1, updatedReference);
+      setReferences(nextReferences);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   function handleSubmit(form) {
     console.log(form)
