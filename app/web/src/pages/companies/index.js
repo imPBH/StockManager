@@ -1,5 +1,5 @@
 import CompanyCard from "@/components/company/CompanyCard";
-import CreateCompany from "@/components/modal/ModalForm";
+import CreateCompany from "@/components/modal/CreateForm";
 import { useState, useEffect } from "react";
 
 export default function Companies() {
@@ -20,20 +20,28 @@ export default function Companies() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: form.companyName }),
-    }).then((response) => {
+      body: JSON.stringify({ name: form.name }),
+    })
+    .then((response) => {
       if (response.ok) {
-        const newCompany = {
-          name: form.companyName,
-          logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk8bUSqr03ci51Fgv4DFkCEtx-6hs8F5_Jfd2GYk5dk35zKgKpEQ3XcTcfZOnR-uvNu_8&usqp=CAU",
-          warehouses: [9, 6, 10],
-        };
-        const nextCompanies = companies.slice();
-        nextCompanies.push(newCompany);
-        setCompanies(nextCompanies);
+        return response.json();
       } else {
         throw new Error("Error while adding new company");
       }
+    })
+    .then((data) => {
+      const newCompany = {
+        id: data, // Ajouter l'ID à l'objet newCompany
+        name: form.name,
+        logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk8bUSqr03ci51Fgv4DFkCEtx-6hs8F5_Jfd2GYk5dk35zKgKpEQ3XcTcfZOnR-uvNu_8&usqp=CAU",
+        warehouses: [9, 6, 10],
+      };
+      const nextCompanies = companies.slice();
+      nextCompanies.push(newCompany);
+      setCompanies(nextCompanies);
+    })
+    .catch((error) => {
+      console.error(error);
     });
   }
 
@@ -47,6 +55,7 @@ export default function Companies() {
       .then((response) => response.json())
       .then((data) => {
         const mappedCompanies = data.map((company) => ({
+          id: company.id,
           name: company.name,
           logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk8bUSqr03ci51Fgv4DFkCEtx-6hs8F5_Jfd2GYk5dk35zKgKpEQ3XcTcfZOnR-uvNu_8&usqp=CAU",
           warehouses: [9, 6, 10],
@@ -75,7 +84,7 @@ export default function Companies() {
           </div>
         </div>
       </div>
-      <CreateCompany onSubmit={handleSubmit} />
+      <CreateCompany creation="company" onSubmit={handleSubmit} />
     </>
   );
 }
