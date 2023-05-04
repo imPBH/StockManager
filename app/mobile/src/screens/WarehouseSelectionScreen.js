@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -9,27 +9,29 @@ import TileComponent from "../components/TileComponent";
 import { useNavigation } from '@react-navigation/native';
 
 export default function WarehouseSelectionScreen({ route }) {
-  const warehouses = [
-    "Warehouse 1",
-    "Warehouse 2",
-    "Warehouse 3",
-    "Warehouse 4",
-    "Warehouse 5",
-    "Warehouse 6",
-    "Warehouse 7"
-  ];
+  const [warehouses, setWarehouses] = useState([]);
   const navigation = useNavigation();
   const company = route.params.company;
+
   const handleWarehouseSelection = (warehouse) => {
-    console.log(`User selected ${warehouse}`);
+    console.log(`User selected ${warehouse.name} id ${warehouse.id}`);
     navigation.navigate("PrincipalScreen", { warehouse , company });
   };
 
-  const TilesWarehouses = warehouses.map((warehouse) => (
-    <TileComponent key={warehouse} title={warehouse} onPress={handleWarehouseSelection} />
-    ));
+  useEffect(() => {
+    fetch(`http://stockmanager.alexisprovo.fr/api/warehouses/get?companyId=${company.id}`, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(data => setWarehouses(data))
+  })
 
-  
+  const TilesWarehouses = warehouses.map((warehouse) => (
+    <TileComponent key={warehouse.id} title={warehouse.name} onPress={() => handleWarehouseSelection(warehouse)} />
+    ));
 
   return (
     <View style={styles.container}>
