@@ -18,9 +18,15 @@ namespace StockManagerApi.Controllers
             _context = context;
         }
 
+        public class CreateReferenceModel
+        {
+            public ItemReference Reference { get; set; }
+            public int CompanyId { get; set; }
+        }
+
         [Authorize]
         [HttpPost("create")]
-        public IActionResult Create(int barcode, string name, float price, int companyId)
+        public IActionResult Create([FromBody] CreateReferenceModel model)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
@@ -28,7 +34,7 @@ namespace StockManagerApi.Controllers
                 return StatusCode(401);
             }
 
-            var company = _context.Companies.FirstOrDefault(c => c.Id == companyId);
+            var company = _context.Companies.FirstOrDefault(c => c.Id == model.CompanyId);
             if (company == null)
             {
                 return BadRequest(new { message = "Company not found" });
@@ -40,30 +46,23 @@ namespace StockManagerApi.Controllers
                 return Forbid();
             }
 
-            var newReference = new ItemReference
-            {
-                Barcode_value = barcode,
-                Name = name,
-                Price = price
-            };
-
-            _context.Items_References.Add(newReference);
+            _context.Items_References.Add(model.Reference);
             _context.SaveChanges();
 
             var newCompanyReference = new CompanyReference
             {
-                Id_Company = companyId,
-                Id_Reference = newReference.Id
+                Id_Company = model.CompanyId,
+                Id_Reference = model.Reference.Id
             };
 
             _context.Companies_References.Add(newCompanyReference);
             _context.SaveChanges();
 
-            return Ok(newReference);
+            return Ok(model.Reference);
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("get")]
         public IActionResult Get(int companyId)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);

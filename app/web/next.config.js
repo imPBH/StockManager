@@ -6,6 +6,10 @@ const nextConfig = {
       {
         source: '/warehouses/:idCompany',
         destination: '/warehouses',
+      },
+      {
+        source: '/references/:idCompany',
+        destination: '/references',
       }
     ]
   }
