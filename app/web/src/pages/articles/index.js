@@ -28,10 +28,73 @@ export default function Articles() {
 
   const ArticlesCard = () => {
     const articlesCard = articles.map((article) => (
-      <ArticleCard article={article}></ArticleCard>
+      <ArticleCard article={article} handleDelete={handleDelete} handleUpdate={handleUpdate}></ArticleCard>
     ));
     return articlesCard;
   };
+
+  function handleUpdate(form, article) {
+    fetch("http://stockmanager.alexisprovo.fr/api/article/update", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: article.id,
+        expiration: form.expiration || null
+      }),
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error while updating article");
+      }
+    })
+    .then(() => {
+      const index = articles.findIndex((a) => a.id === article.id);
+      const updatedArticles = {
+        ...article,
+        expiration: form.expiration || null,
+      };
+      const nextArticles = articles.slice();
+      nextArticles.splice(index, 1, updatedArticles);
+      setArticles(nextArticles);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
+  function handleDelete(article) {
+    fetch("http://stockmanager.alexisprovo.fr/api/article/delete", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_article: article.id
+      }),
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error while deleting article");
+      }
+    })
+    .then(() => {
+      const updatedArticles = articles.filter(
+        (a) => a.id !== article.id
+      );
+      setArticles(updatedArticles);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   function handleSubmit(form) {
     console.log(form);

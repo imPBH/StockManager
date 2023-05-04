@@ -129,7 +129,7 @@ namespace StockManagerApi.Controllers
             _context.Companies_References.Remove(companyReference);
             _context.SaveChanges();
 
-            return Ok(new { message = "Warehouse deleted successfully" });
+            return Ok(new { message = "Reference deleted successfully" });
         }
 
         [Authorize]
