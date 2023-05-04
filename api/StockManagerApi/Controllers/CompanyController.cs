@@ -24,7 +24,7 @@ namespace StockManagerApi.Controllers
 
         [Authorize]
         [HttpPost("create")]
-        public IActionResult Create([FromBody] string name)
+        public IActionResult Create([FromBody] Company company)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
@@ -32,10 +32,6 @@ namespace StockManagerApi.Controllers
                 return BadRequest();
             }
 
-            var company = new Company
-            {
-                Name = name
-            };
             _context.Companies.Add(company);
 
             _context.SaveChanges();
