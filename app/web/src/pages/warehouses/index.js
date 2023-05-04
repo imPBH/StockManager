@@ -33,13 +33,57 @@ export default function Warehouses() {
 
   const WarehousesCard = () => {
     const warehousesCard = warehouses.map((warehouse) => (
-      <WarehouseCard warehouse={warehouse}></WarehouseCard>
+      <WarehouseCard
+        warehouse={warehouse}
+        handleUpdate={handleUpdate}
+        handleDelete={handleDelete}
+      ></WarehouseCard>
     ));
     return warehousesCard;
   };
 
+  function handleDelete(warehouse) {
+    fetch("http://stockmanager.alexisprovo.fr/api/warehouses/delete", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idwarehouse: warehouse.id,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.json().then((error) => {
+            if (
+              error.message ===
+              "Cannot delete warehouse, there are still articles linked to it."
+            ) {
+              alert(
+                "This warehouse cannot be deleted because it still contains articles."
+              );
+            } else {
+              throw new Error("Error while deleting warehouse");
+            }
+          });
+        }
+      })
+      .then(() => {
+        const updatedWarehouses = warehouses.filter(
+          (w) => w.id !== warehouse.id
+        );
+        setWarehouses(updatedWarehouses);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   function handleSubmit(form) {
-    console.log(form)
+    console.log(form);
     fetch("http://stockmanager.alexisprovo.fr/api/warehouses/create", {
       method: "POST",
       credentials: "include",
@@ -63,6 +107,40 @@ export default function Warehouses() {
         };
         const nextWarehouses = warehouses.slice();
         nextWarehouses.push(newWarehouse);
+        setWarehouses(nextWarehouses);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  function handleUpdate(form, warehouse) {
+    fetch("http://stockmanager.alexisprovo.fr/api/warehouses/update", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idwarehouse: warehouse.id,
+        name: form.name,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Error while updating warehouse");
+        }
+      })
+      .then(() => {
+        const index = warehouses.findIndex((w) => w.id === warehouse.id);
+        const updatedWarehouse = {
+          ...warehouse,
+          name: form.name,
+        };
+        const nextWarehouses = warehouses.slice();
+        nextWarehouses.splice(index, 1, updatedWarehouse);
         setWarehouses(nextWarehouses);
       })
       .catch((error) => {

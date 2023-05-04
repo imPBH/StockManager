@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using StockManagerApi.Data;
 using StockManagerApi.Models;
@@ -52,9 +53,15 @@ namespace StockManagerApi.Controllers
 
         }
 
+        public class UpdateModel
+        {
+            public int IdWarehouse { get; set; }
+            public string Name { get; set; }
+        }
+
         [Authorize]
         [HttpPost("update")]
-        public IActionResult Update(int id, string newName)
+        public IActionResult Update([FromBody] UpdateModel model)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
@@ -62,7 +69,7 @@ namespace StockManagerApi.Controllers
                 return StatusCode(401);
             }
 
-            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == id);
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == model.IdWarehouse);
             if (warehouse == null)
             {
                 return BadRequest(new { message = "Warehouse not found" });
@@ -80,15 +87,20 @@ namespace StockManagerApi.Controllers
                 return Forbid();
             }
 
-            warehouse.Name = newName;
+            warehouse.Name = model.Name;
             _context.SaveChanges();
 
-            return Ok(new { message = "Warehouse updated successfully" });
+            return Ok(warehouse);
+        }
+
+        public class DeleteModel
+        {
+            public int IdWarehouse { get; set; }
         }
 
         [Authorize]
         [HttpPost("delete")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromBody] DeleteModel model)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
@@ -96,7 +108,7 @@ namespace StockManagerApi.Controllers
                 return StatusCode(401);
             }
 
-            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == id);
+            var warehouse = _context.Warehouses.FirstOrDefault(w => w.Id == model.IdWarehouse);
             if (warehouse == null)
             {
                 return BadRequest(new { message = "Warehouse not found" });
@@ -114,11 +126,23 @@ namespace StockManagerApi.Controllers
                 return Forbid();
             }
 
-            _context.Warehouses.Remove(warehouse);
-            _context.SaveChanges();
+            try
+            {
+                _context.Warehouses.Remove(warehouse);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqliteException sqliteException && sqliteException.SqliteErrorCode == 19)
+                {
+                    return BadRequest(new { message = "Cannot delete warehouse, there are still articles linked to it." });
+                }
+                throw;
+            }
 
             return Ok(new { message = "Warehouse deleted successfully" });
         }
+
 
         [Authorize]
         [HttpGet("get")]
