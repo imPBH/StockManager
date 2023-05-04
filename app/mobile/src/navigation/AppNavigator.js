@@ -6,6 +6,7 @@ import PrincipalScreen from '../screens/PrincipalScreen.js';
 import ManageInventoryScreen from '../screens/ManageInventoryScreen';
 import SaleScreen from '../screens/SaleScreen.js';
 import NewReferenceScreen from '../screens/NewReferenceScreen';
+import NewArticleScreen from '../screens/NewArticleScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +20,7 @@ export default function AppNavigator() {
       <Stack.Screen name="ManageInventoryScreen" component={ManageInventoryScreen} />
       <Stack.Screen name="SaleScreen" component={SaleScreen} />
       <Stack.Screen name="NewReferenceScreen" component={NewReferenceScreen} />
-
+      <Stack.Screen name="NewArticleScreen" component={NewArticleScreen} />
     </Stack.Navigator>
   );
 }
