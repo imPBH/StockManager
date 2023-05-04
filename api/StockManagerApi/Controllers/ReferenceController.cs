@@ -132,5 +132,42 @@ namespace StockManagerApi.Controllers
             return Ok();
         }
 
+        [Authorize]
+        [HttpPost("update")]
+        public IActionResult Update([FromBody] ItemReference reference)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return StatusCode(401);
+            }
+
+            var companyReference = _context.Companies_References.Include(cr => cr.Reference).FirstOrDefault(cr => cr.Reference.Id == reference.Id);
+            if (companyReference == null)
+            {
+                return BadRequest(new { message = "Reference not found" });
+            }
+
+            var company = _context.Companies.FirstOrDefault(c => c.Id == companyReference.Id_Company);
+            if (company == null)
+            {
+                return BadRequest(new { message = "Company not found" });
+            }
+
+            var userCompany = _context.Users_Companies.FirstOrDefault(uc => uc.Id_User == user.Id && uc.Id_Company == company.Id);
+            if (userCompany == null)
+            {
+                return Forbid();
+            }
+
+            companyReference.Reference.Barcode_value = reference.Barcode_value;
+            companyReference.Reference.Name = reference.Name;
+            companyReference.Reference.Price = reference.Price;
+
+            _context.SaveChanges();
+
+            return Ok(companyReference.Reference);
+        }
+
     }
 }
