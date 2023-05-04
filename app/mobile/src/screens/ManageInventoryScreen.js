@@ -28,6 +28,7 @@ export default function ScannerScreenAdd({route}) {
       const scannedReference = referencesData.find(reference => reference.barcode_value === data);
       if (scannedReference) {
         console.log(`Le code barre ${data} correspond à la référence ${scannedReference.name}`);
+        navigation.navigate('NewArticleScreen', { scannedReference , warehouse });
       } else {
         console.log(`Le code barre ${data} n'a pas été trouvé dans les références`);
         navigation.navigate('NewReferenceScreen', { data , company });
