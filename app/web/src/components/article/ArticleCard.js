@@ -5,7 +5,7 @@ export default function ArticleCard({article}) {
             <div className="sm:flex sm:items-center sm:justify-between sm:space-x-5">
               <div className="flex items-center flex-1 min-w-0">
                 <img
-                  src="https://static.vecteezy.com/system/resources/thumbnails/002/368/699/small/layers-icon-free-vector.jpg"
+                  src="https://cdns.iconmonstr.com/wp-content/releases/preview/2019/240/iconmonstr-product-3.png"
                   alt={article.name}
                   className="flex-shrink-0 object-cover rounded-full btn- w-10 h-10"
                 />

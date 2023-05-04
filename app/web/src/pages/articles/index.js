@@ -1,5 +1,5 @@
 import ArticleCard from "@/components/article/ArticleCard";
-import CreateWarehouse from "@/components/modal/CreateForm";
+import CreateArticleForm from "@/components/modal/CreateArticleForm";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
@@ -7,8 +7,6 @@ export default function Articles() {
   const router = useRouter();
   const { idWarehouse } = router.query;
   const [articles, setArticles] = useState([]);
-  const [references, setReferences] = useState({});
-
 
   useEffect(() => {
     if (idWarehouse) {
@@ -22,7 +20,9 @@ export default function Articles() {
         }
       )
         .then((response) => response.json())
-        .then((data) => {setArticles(data)});
+        .then((data) => {
+          setArticles(data);
+        });
     }
   }, [idWarehouse]);
 
@@ -34,31 +34,40 @@ export default function Articles() {
   };
 
   function handleSubmit(form) {
-    console.log(form)
-    fetch("http://stockmanager.alexisprovo.fr/api/warehouses/create", {
+    console.log(form);
+    fetch("http://stockmanager.alexisprovo.fr/api/article/create", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: form.name, id_company: idCompany }),
+      body: JSON.stringify({
+        id_reference: form.idReference,
+        id_warehouse: idWarehouse,
+        expiration: form.expiration || null,
+      }),
     })
       .then((response) => {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Error while adding new warehouse");
+          throw new Error("Error while adding new article");
         }
       })
-      .then((data) => {
-        const newWarehouse = {
-          id: data,
-          name: form.name,
-          logo: "https://static.vecteezy.com/system/resources/thumbnails/002/387/736/small/warehouse-icon-free-vector.jpg",
-        };
-        const nextWarehouses = warehouses.slice();
-        nextWarehouses.push(newWarehouse);
-        setWarehouses(nextWarehouses);
+      .then(() => {
+        fetch(
+          `http://stockmanager.alexisprovo.fr/api/article/get?idWarehouse=${idWarehouse}`,
+          {
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            setArticles(data);
+          });
       })
       .catch((error) => {
         console.error(error);
@@ -85,7 +94,7 @@ export default function Articles() {
           </div>
         </div>
       </div>
-      <CreateWarehouse creation="warehouse" onSubmit={handleSubmit} />
+      <CreateArticleForm onSubmit={handleSubmit} />
     </>
   );
 }
