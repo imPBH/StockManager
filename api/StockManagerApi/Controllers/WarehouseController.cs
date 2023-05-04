@@ -21,9 +21,10 @@ namespace StockManagerApi.Controllers
             _context = context;
         }
 
+
         [Authorize]
         [HttpPost("create")]
-        public IActionResult Create(string name, int companyId)
+        public IActionResult Create([FromBody] Warehouse warehouse)
         {
             var user = _context.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
@@ -31,7 +32,7 @@ namespace StockManagerApi.Controllers
                 return StatusCode(401);
             }
 
-            var company = _context.Companies.FirstOrDefault(c => c.Id == companyId);
+            var company = _context.Companies.FirstOrDefault(c => c.Id == warehouse.Id_Company);
             if (company == null)
             {
                 return BadRequest(new { message = "Company not found" });
@@ -43,17 +44,11 @@ namespace StockManagerApi.Controllers
                 return Forbid();
             }
 
-            var warehouse = new Warehouse
-            {
-                Name = name,
-                Id_Company = companyId
-            };
-
             _context.Warehouses.Add(warehouse);
 
             _context.SaveChanges();
 
-            return Created(name, companyId);
+            return Created($"api/warehouses/{warehouse.Id}", warehouse.Id);
 
         }
 
