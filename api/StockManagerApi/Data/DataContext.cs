@@ -20,5 +20,7 @@ namespace StockManagerApi.Data
         public DbSet<ItemReference> Items_References { get; set; }
         public DbSet<CompanyReference> Companies_References { get; set; }
         public DbSet<Article> Articles { get; set; }
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleItem> Sales_Items { get; set; }
     }
 }
