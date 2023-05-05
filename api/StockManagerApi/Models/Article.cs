@@ -7,7 +7,10 @@ namespace StockManagerApi.Models
     {
         public int Id { get; set; }
         public int Id_Reference { get; set; }
-        public int Id_Warehouse { get; set; }
+        public int? Id_Warehouse { get; set; }
         public DateTime? Expiration { get; set; }
+
+        [ForeignKey("Id_Warehouse")]
+        public Warehouse Warehouse { get; set; }
     }
 }

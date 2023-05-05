@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS "articles"
 (
     id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
     id_reference INTEGER NOT NULL,
-    id_warehouse INTEGER NOT NULL,
+    id_warehouse INTEGER,
     expiration TEXT,
     FOREIGN KEY(id_reference) REFERENCES items_references(id),
     FOREIGN KEY(id_warehouse) REFERENCES warehouses(id)
@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS "orders_items"
 CREATE TABLE IF NOT EXISTS "sales"
 (
     id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
-    created_at TEXT NOT NULL
+    id_company INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(id_company) REFERENCES companies(id)
 );
 
 CREATE TABLE IF NOT EXISTS "sales_items"
