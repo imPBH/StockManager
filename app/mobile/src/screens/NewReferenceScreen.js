@@ -11,7 +11,6 @@ export default function NewReferenceScreen({ route }) {
 
   const handleSubmit = async () => {
     try {
-        console.log(barcode)
       const response = await fetch('http://stockmanager.alexisprovo.fr/api/reference/create', {
         method: 'POST',
         headers: {
@@ -21,7 +20,7 @@ export default function NewReferenceScreen({ route }) {
             reference: {
                 barcode_value: barcode,
                 name: name,
-                price: price
+                price: price.replace(",", ".")
             },
             companyId: companyId
         })
